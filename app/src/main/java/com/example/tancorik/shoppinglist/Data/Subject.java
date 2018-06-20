@@ -18,9 +18,9 @@ public class Subject {
         mCategory = category;
     }
 
-    public Subject(Subject subject) {
-        this(subject.getId(), subject.getName(), subject.getPrice(), subject.getCategory());
-    }
+//    public Subject(Subject subject) {
+//        this(subject.getId(), subject.getName(), subject.getPrice(), subject.getCategory());
+//    }
 
     public void setId(int id) {
         mId = id;

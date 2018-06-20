@@ -19,11 +19,11 @@ import java.util.List;
 
 
 public class FragmentShowingDatabase extends Fragment implements FragmentShowingDatabasePresenter.IPresenterListener,
-        MainRecyclerAdapter.IMainRecyclerCallback {
+        EditRecyclerAdapter.IMainRecyclerCallback {
 
     public static final String TAG = "fragmentShowingDatabase";
 
-    private MainRecyclerAdapter mRecyclerAdapter;
+    private EditRecyclerAdapter mRecyclerAdapter;
     private ArrayAdapter<String> mSpinnerAdapter;
     private List<String> mCategoryList = new ArrayList<>();
     private FragmentShowingDatabasePresenter mPresenter;
@@ -46,7 +46,7 @@ public class FragmentShowingDatabase extends Fragment implements FragmentShowing
         mPositionSpinner = 0;
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_for_showing_fragment);
-        mRecyclerAdapter = new MainRecyclerAdapter(this);
+        mRecyclerAdapter = new EditRecyclerAdapter(this);
         recyclerView.setAdapter(mRecyclerAdapter);
 
         Spinner spinner = view.findViewById(R.id.category_spinner);

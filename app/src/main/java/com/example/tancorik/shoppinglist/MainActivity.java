@@ -1,59 +1,108 @@
 package com.example.tancorik.shoppinglist;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-
-import com.example.tancorik.shoppinglist.Data.SQLData.DatabaseAdapter;
-import com.example.tancorik.shoppinglist.Data.Subject;
-import com.example.tancorik.shoppinglist.Data.SubjectCategory;
+import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements StringsRecyclerAdapter.IStringRecyclerAdapterCallback,
+        MainActivityPresenter.IMainActivityPresenterCallback {
 
-    private static final String LOG_TAG = "MainActivity_LOG_TAG";
+    private StringsRecyclerAdapter mAdapter;
+    private boolean mCreateListFlag;
+    private EditText mListNameEditText;
+    private MainActivityPresenter mMainActivityPresenter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (savedInstanceState == null) {
+        Button createNewList = findViewById(R.id.add_shopping_list_button);
+        createNewList.setOnClickListener(new ClickListener());
+
+        mListNameEditText = findViewById(R.id.name_shopping_list_edit_text);
+        mListNameEditText.setVisibility(View.INVISIBLE);
+        mListNameEditText.setOnClickListener(new ClickListener());
+
+        RecyclerView recyclerView = findViewById(R.id.all_shopping_list_recycler);
+        mAdapter = new StringsRecyclerAdapter(this);
+        recyclerView.setAdapter(mAdapter);
+
+        mCreateListFlag = false;
+        mMainActivityPresenter = new MainActivityPresenter(this, this);
+        mMainActivityPresenter.startPresenter();
+        mMainActivityPresenter.loadShoppingList();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, 1, 1, "Редактор товаров");
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == 1) {
             Intent intent = new Intent(this, ActivityForDatabaseEditing.class);
             startActivity(intent);
         }
+        return super.onOptionsItemSelected(item);
+    }
 
-//        DatabaseAdapter databaseAdapter = new DatabaseAdapter(getApplicationContext());
-//        databaseAdapter.openDatabase();
-//
-////        databaseAdapter.insertCategory("Лекарства");
-//
-//        List<SubjectCategory> categoryList = databaseAdapter.getCategoryList();
-//        for (int i=0 ; i < categoryList.size(); i++) {
-//            Log.i(LOG_TAG, categoryList.get(i).getName());
-//        }
-//
-////        databaseAdapter.insertSubject(new Subject(1, "Витаминки", 160, 3));
-//        databaseAdapter.updateSubject(new Subject(1, "Батон", 23, 1));
-//
-//        List<Subject> subjectList = databaseAdapter.getSubjectList(null, 0);
-//        for (int i=0; i < subjectList.size(); i++) {
-//            Log.i(LOG_TAG, subjectList.get(i).toString());
-//        }
-//
-//        Log.i(LOG_TAG, databaseAdapter.getSubject(1).toString());
-//
-//        databaseAdapter.closeDatabase();
+    @Override
+    protected void onStop() {
+        mMainActivityPresenter.stopPresenter();
+        super.onStop();
+    }
 
-
-//        Spinner spinner = findViewById(R.id.spinner_view);
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner_item, R.id.text_for_spinner);
-//        spinner.setAdapter(adapter);
-
+    @Override
+    public void onClick(String string) {
 
     }
+
+    @Override
+    public void onLoadShoppingList(List<String> fileList) {
+        mAdapter.setList(fileList);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    class ClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.add_shopping_list_button :
+                    if (!mCreateListFlag) {
+                        mListNameEditText.setVisibility(View.VISIBLE);
+                        mCreateListFlag = true;
+                    }
+                    else {
+                        if (!mListNameEditText.getText().toString().isEmpty()) {
+                            mMainActivityPresenter.createNewShoppingList(mListNameEditText.getText().toString());
+                        }
+                        mListNameEditText.setText("");
+                        mListNameEditText.setVisibility(View.INVISIBLE);
+                        mCreateListFlag = false;
+                    }
+                    break;
+                case R.id.name_shopping_list_edit_text :
+                    EditText editText = findViewById(R.id.name_shopping_list_edit_text);
+                    editText.setText("");
+                    editText.setVisibility(View.INVISIBLE);
+                    mCreateListFlag = false;
+                    break;
+            }
+        }
+    }
+
 }

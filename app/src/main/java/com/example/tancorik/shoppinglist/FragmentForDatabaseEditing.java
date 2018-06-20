@@ -63,6 +63,7 @@ public class FragmentForDatabaseEditing extends Fragment implements FragmentForD
         updateButton.setOnClickListener(new ButtonListener());
 
         mNameEditText = view.findViewById(R.id.name_subject_edit_text);
+        mNameEditText.setOnClickListener(new ButtonListener());
         mNameEditText.addTextChangedListener(new ChangeTextListener());
         mPriceEditText = view.findViewById(R.id.price_subject_edit_text);
 
@@ -87,7 +88,7 @@ public class FragmentForDatabaseEditing extends Fragment implements FragmentForD
 
     @Override
     public void onStop() {
-
+        mPresenter.closePresenter();
         super.onStop();
     }
 
@@ -125,6 +126,9 @@ public class FragmentForDatabaseEditing extends Fragment implements FragmentForD
                     mPresenter.update(mSwitch.isChecked(), mNameEditText.getText().toString(),
                             mPriceEditText.getText().toString(), mCategory, idSubject);
                     break;
+                case R.id.name_subject_edit_text :
+                    mNameEditText.setText("");
+                    break;
             }
             mSubject = null;
         }
@@ -137,8 +141,10 @@ public class FragmentForDatabaseEditing extends Fragment implements FragmentForD
         }
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            mCallback.updateWithFilter(s.toString());
+        public void onTextChanged(final CharSequence s, int start, int before, int count) {
+            if (s.length() > 0) {
+                mCallback.updateWithFilter(s.toString());
+            }
         }
 
         @Override

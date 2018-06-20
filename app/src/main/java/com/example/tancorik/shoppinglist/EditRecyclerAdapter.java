@@ -12,7 +12,7 @@ import com.example.tancorik.shoppinglist.Data.Subject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapter.ViewHolder> {
+public class EditRecyclerAdapter extends RecyclerView.Adapter<EditRecyclerAdapter.ViewHolder> {
 
     private List<Subject> mSubjectList = new ArrayList<>();
     private IMainRecyclerCallback mMainRecyclerCallback;
@@ -25,7 +25,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
         }
     }
 
-    public MainRecyclerAdapter(IMainRecyclerCallback mainRecyclerCallback) {
+    EditRecyclerAdapter(IMainRecyclerCallback mainRecyclerCallback) {
         mMainRecyclerCallback = mainRecyclerCallback;
     }
 
