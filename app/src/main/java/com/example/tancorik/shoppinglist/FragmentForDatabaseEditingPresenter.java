@@ -6,7 +6,7 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 
-import com.example.tancorik.shoppinglist.Data.SQLData.DatabaseAdapter;
+import com.example.tancorik.shoppinglist.Data.SQLData.DatabaseManager;
 import com.example.tancorik.shoppinglist.Data.Subject;
 import com.example.tancorik.shoppinglist.Data.SubjectCategory;
 
@@ -14,11 +14,11 @@ public class FragmentForDatabaseEditingPresenter {
 
     private HandlerThread mHandlerThread;
     private Looper mLooper;
-    private DatabaseAdapter mDatabaseAdapter;
+    private DatabaseManager mDatabaseManager;
     private IPresenterListener mPresenterListener;
 
     public FragmentForDatabaseEditingPresenter(Context context, IPresenterListener presenterListener) {
-        mDatabaseAdapter = new DatabaseAdapter(context);
+        mDatabaseManager = new DatabaseManager();
         mPresenterListener = presenterListener;
         mHandlerThread = new HandlerThread("editingPresenter");
         mHandlerThread.start();
@@ -35,13 +35,13 @@ public class FragmentForDatabaseEditingPresenter {
             @Override
             public void run() {
                 if (!name.isEmpty()) {
-                    mDatabaseAdapter.openDatabase();
+                    mDatabaseManager.openDatabase();
                     final long result;
                     if (!switchPosition) {
-                        result = mDatabaseAdapter.insertCategory(name);
+                        result = mDatabaseManager.insertCategory(name);
                     } else {
                         if (!price.isEmpty()) {
-                            result = mDatabaseAdapter.insertSubject(new Subject(0, name, Integer.parseInt(price), category));
+                            result = mDatabaseManager.insertSubject(new Subject(0, name, Integer.parseInt(price), category));
                         }
                         else result = -1;
                     }
@@ -51,29 +51,29 @@ public class FragmentForDatabaseEditingPresenter {
                             mPresenterListener.onUpdateDatabase(result);
                         }
                     });
-                    mDatabaseAdapter.closeDatabase();
+                    mDatabaseManager.closeDatabase();
                 }
             }
         });
-        mDatabaseAdapter.closeDatabase();
+        mDatabaseManager.closeDatabase();
     }
 
     public void delete(final boolean switchPosition, final int id, @Nullable final Subject subject) {
         new Handler(mLooper).post(new Runnable() {
             @Override
             public void run() {
-                mDatabaseAdapter.openDatabase();
+                mDatabaseManager.openDatabase();
                 final long result;
                 if (!switchPosition){
-                    result = mDatabaseAdapter.deleteCategory(id);
+                    result = mDatabaseManager.deleteCategory(id);
                 }
                 else if (subject != null) {
-                    result = mDatabaseAdapter.deleteSubject(subject.getId());
+                    result = mDatabaseManager.deleteSubject(subject.getId());
                 }
                 else {
                     result = -1;
                 }
-                mDatabaseAdapter.closeDatabase();
+                mDatabaseManager.closeDatabase();
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
@@ -90,17 +90,17 @@ public class FragmentForDatabaseEditingPresenter {
             new Handler(mLooper).post(new Runnable() {
                 @Override
                 public void run() {
-                    mDatabaseAdapter.openDatabase();
+                    mDatabaseManager.openDatabase();
                     final long result;
                     if (!switchPosition) {
-                        result = mDatabaseAdapter.updateCategory(new SubjectCategory(idCategory, name));
+                        result = mDatabaseManager.updateCategory(new SubjectCategory(idCategory, name));
                     } else if (!price.isEmpty() && idSubject >=0 ) {
-                        result = mDatabaseAdapter.updateSubject(new Subject(idSubject, name, Integer.parseInt(price), idCategory));
+                        result = mDatabaseManager.updateSubject(new Subject(idSubject, name, Integer.parseInt(price), idCategory));
                     }
                     else{
                         result = -1;
                     }
-                    mDatabaseAdapter.closeDatabase();
+                    mDatabaseManager.closeDatabase();
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {

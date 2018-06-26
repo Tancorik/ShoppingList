@@ -5,7 +5,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 
-import com.example.tancorik.shoppinglist.Data.SQLData.DatabaseAdapter;
+import com.example.tancorik.shoppinglist.Data.SQLData.DatabaseManager;
 import com.example.tancorik.shoppinglist.Data.Subject;
 import com.example.tancorik.shoppinglist.Data.SubjectCategory;
 
@@ -14,14 +14,14 @@ import java.util.List;
 
 public class FragmentShowingDatabasePresenter {
 
-    private DatabaseAdapter mDatabaseAdapter;
+    private DatabaseManager mDatabaseManager;
     private HandlerThread mHandlerThread;
     private Looper mLooper;
     private IPresenterListener mPresenterListener;
     private List<SubjectCategory> mCategoryList;
 
     FragmentShowingDatabasePresenter(Context context, IPresenterListener presenterListener) {
-        mDatabaseAdapter = new DatabaseAdapter(context);
+        mDatabaseManager = new DatabaseManager();
         mPresenterListener = presenterListener;
         mHandlerThread = new HandlerThread("databasePresenter");
         mHandlerThread.start();
@@ -40,8 +40,8 @@ public class FragmentShowingDatabasePresenter {
         new Handler(mLooper).post(new Runnable() {
             @Override
             public void run() {
-                mDatabaseAdapter.openDatabase();
-                mCategoryList = mDatabaseAdapter.getCategoryList();
+                mDatabaseManager.openDatabase();
+                mCategoryList = mDatabaseManager.getCategoryList();
                 final List<String> categoryNames = getCategoryStringList();
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
@@ -49,7 +49,7 @@ public class FragmentShowingDatabasePresenter {
                         mPresenterListener.onLoadCategory(categoryNames);
                     }
                 });
-                mDatabaseAdapter.closeDatabase();
+                mDatabaseManager.closeDatabase();
             }
         });
 
@@ -59,15 +59,15 @@ public class FragmentShowingDatabasePresenter {
         new Handler(mLooper).post(new Runnable() {
             @Override
             public void run() {
-                mDatabaseAdapter.openDatabase();
-                final List<Subject> subjectList = mDatabaseAdapter.getSubjectList(string, mCategoryList.get(categoryPosition).getId());
+                mDatabaseManager.openDatabase();
+                final List<Subject> subjectList = mDatabaseManager.getSubjectList(string, mCategoryList.get(categoryPosition).getId());
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
                         mPresenterListener.onLoadSubjects(subjectList);
                     }
                 });
-                mDatabaseAdapter.closeDatabase();
+                mDatabaseManager.closeDatabase();
             }
         });
     }

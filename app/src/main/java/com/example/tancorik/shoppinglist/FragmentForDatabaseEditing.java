@@ -142,9 +142,9 @@ public class FragmentForDatabaseEditing extends Fragment implements FragmentForD
 
         @Override
         public void onTextChanged(final CharSequence s, int start, int before, int count) {
-            if (s.length() > 0) {
-                mCallback.updateWithFilter(s.toString());
-            }
+//            if (s.length() > 0) {
+//                mCallback.updateWithFilter(s.toString());
+//            }
         }
 
         @Override

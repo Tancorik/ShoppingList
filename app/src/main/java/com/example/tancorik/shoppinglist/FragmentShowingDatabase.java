@@ -56,7 +56,7 @@ public class FragmentShowingDatabase extends Fragment implements FragmentShowing
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mPresenter.loadSubjectList(null, position);
-                mCallback.onCategoryChange(mPresenter.getCategory(position));
+                mCallback.onCategoryChoose(mPresenter.getCategory(position));
                 mPositionSpinner = position;
             }
 
@@ -79,7 +79,7 @@ public class FragmentShowingDatabase extends Fragment implements FragmentShowing
 
     @Override
     public void onStop() {
-        mPresenter.closePresenter();
+//        mPresenter.closePresenter();
         super.onStop();
     }
 
@@ -95,14 +95,14 @@ public class FragmentShowingDatabase extends Fragment implements FragmentShowing
         mCategoryList.addAll(categoryList);
         mSpinnerAdapter.notifyDataSetChanged();
         if (mPositionSpinner < categoryList.size()) {
-            mCallback.onCategoryChange(mPresenter.getCategory(mPositionSpinner));
+            mCallback.onCategoryChoose(mPresenter.getCategory(mPositionSpinner));
             mPresenter.loadSubjectList(null, mPositionSpinner);
         }
     }
 
     @Override
     public void onSubjectClick(Subject subject) {
-        mCallback.onSubjectChange(subject);
+        mCallback.onSubjectChoose(subject);
     }
 
     public void updateContent() {
@@ -114,8 +114,8 @@ public class FragmentShowingDatabase extends Fragment implements FragmentShowing
     }
 
     interface FragmentShowingDatabaseListener {
-        void onCategoryChange(int category);
-        void onSubjectChange(Subject subject);
+        void onCategoryChoose(int category);
+        void onSubjectChoose(Subject subject);
     }
     
 }

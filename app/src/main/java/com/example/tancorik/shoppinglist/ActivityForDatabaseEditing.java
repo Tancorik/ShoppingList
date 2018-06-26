@@ -48,12 +48,12 @@ public class ActivityForDatabaseEditing extends AppCompatActivity implements
     }
 
     @Override
-    public void onCategoryChange(int categoryId) {
+    public void onCategoryChoose(int categoryId) {
         mEditFragment.setCategory(categoryId);
     }
 
     @Override
-    public void onSubjectChange(Subject subject) {
+    public void onSubjectChoose(Subject subject) {
         mEditFragment.setSubject(subject);
     }
 }

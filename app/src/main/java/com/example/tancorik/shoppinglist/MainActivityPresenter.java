@@ -17,23 +17,22 @@ public class MainActivityPresenter {
     private HandlerThread mHandlerThread;
     private Looper mLooper;
     private IMainActivityPresenterCallback mCallback;
+    private List<String> mShopListNames;
 
     MainActivityPresenter(Context context, IMainActivityPresenterCallback callback) {
-        mFileManager = new FileManager(context);
+        mFileManager = new FileManager();
         mCallback = callback;
         mHandlerThread = new HandlerThread("mainActivityPresenterThread");
-
-    }
-
-    public void startPresenter() {
-        if (!mHandlerThread.isAlive()) {
-            mHandlerThread.start();
-            mLooper = mHandlerThread.getLooper();
-        }
+        mHandlerThread.start();
+        mLooper = mHandlerThread.getLooper();
     }
 
     public void stopPresenter() {
         mHandlerThread.quit();
+    }
+
+    public String getShoppingListName(int position) {
+        return mShopListNames.get(position);
     }
 
     public void createNewShoppingList(final String name) {
@@ -41,7 +40,7 @@ public class MainActivityPresenter {
             @Override
             public void run() {
                 String content = loadListFile() + name + ",";
-                mFileManager.doWork(NAME_LIST_FILE, content, FileManager.FILE_MANAGER_ACTION_SAVE);
+                mFileManager.save(NAME_LIST_FILE, content);
             }
         });
         loadShoppingList();
@@ -51,11 +50,11 @@ public class MainActivityPresenter {
         new Handler(mLooper).post(new Runnable() {
             @Override
             public void run() {
-                final List<String> list = createList(loadListFile());
+                mShopListNames = createList(loadListFile());
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        mCallback.onLoadShoppingList(list);
+                        mCallback.onLoadShoppingList(mShopListNames);
                     }
                 });
             }
@@ -63,7 +62,7 @@ public class MainActivityPresenter {
     }
 
     private String loadListFile() {
-        return mFileManager.doWork(NAME_LIST_FILE, null, FileManager.FILE_MANAGER_ACTION_LOAD);
+        return mFileManager.load(NAME_LIST_FILE);
     }
 
     private List<String> createList(String string) {
@@ -77,6 +76,10 @@ public class MainActivityPresenter {
         }
         return list;
     }
+
+//    private String getUUID(String string) {
+//        return UUID.nameUUIDFromBytes(string.getBytes()).toString();
+//    }
 
     interface IMainActivityPresenterCallback {
         void onLoadShoppingList(List<String> fileList);

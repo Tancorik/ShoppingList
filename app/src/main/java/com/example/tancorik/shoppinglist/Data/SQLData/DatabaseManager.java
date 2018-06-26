@@ -1,13 +1,12 @@
 package com.example.tancorik.shoppinglist.Data.SQLData;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 
+import com.example.tancorik.shoppinglist.ContextProvider;
 import com.example.tancorik.shoppinglist.Data.Subject;
 import com.example.tancorik.shoppinglist.Data.SubjectCategory;
 
@@ -23,14 +22,15 @@ import static com.example.tancorik.shoppinglist.Data.SQLData.DatabaseHelper.COLU
 import static com.example.tancorik.shoppinglist.Data.SQLData.DatabaseHelper.COLUMN_PRICE;
 import static com.example.tancorik.shoppinglist.Data.SQLData.DatabaseHelper.SUBJECT_TABLE;
 
-public class DatabaseAdapter {
+public class DatabaseManager {
 
     private static final String LOG_TAG = "DatabaseAdapterLOG_TAG";
     private SQLiteDatabase mSQLiteDatabase;
     private DatabaseHelper mDatabaseHelper;
 
-    public DatabaseAdapter(Context context) {
-        mDatabaseHelper = new DatabaseHelper(context.getApplicationContext());
+    public DatabaseManager() {
+        ContextProvider contextProvider = ContextProvider.getInstance();
+        mDatabaseHelper = new DatabaseHelper(contextProvider.getContext());
     }
 
     public void openDatabase() {

@@ -46,7 +46,7 @@ public class StringsRecyclerAdapter extends RecyclerView.Adapter<StringsRecycler
         holder.mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCallback.onClick(mStringList.get(holder.getAdapterPosition()));
+                mCallback.onRecyclerItemClick(holder.getAdapterPosition());
             }
         });
     }
@@ -57,6 +57,6 @@ public class StringsRecyclerAdapter extends RecyclerView.Adapter<StringsRecycler
     }
 
     interface IStringRecyclerAdapterCallback {
-        void onClick(String string);
+        void onRecyclerItemClick(int position);
     }
 }

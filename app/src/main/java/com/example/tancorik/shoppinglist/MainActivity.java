@@ -16,6 +16,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements StringsRecyclerAdapter.IStringRecyclerAdapterCallback,
         MainActivityPresenter.IMainActivityPresenterCallback {
 
+    public static final String NAME_SHOPPING_LIST_KEY = "shopping_list";
+
     private StringsRecyclerAdapter mAdapter;
     private boolean mCreateListFlag;
     private EditText mListNameEditText;
@@ -40,10 +42,15 @@ public class MainActivity extends AppCompatActivity implements StringsRecyclerAd
 
         mCreateListFlag = false;
         mMainActivityPresenter = new MainActivityPresenter(this, this);
-        mMainActivityPresenter.startPresenter();
-        mMainActivityPresenter.loadShoppingList();
+//        mMainActivityPresenter.loadShoppingList();
     }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mMainActivityPresenter.loadShoppingList();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -62,13 +69,15 @@ public class MainActivity extends AppCompatActivity implements StringsRecyclerAd
 
     @Override
     protected void onStop() {
-        mMainActivityPresenter.stopPresenter();
+//        mMainActivityPresenter.stopPresenter();
         super.onStop();
     }
 
     @Override
-    public void onClick(String string) {
-
+    public void onRecyclerItemClick(int position) {
+        Intent intent = new Intent(this, ActivityShowingShoppingList.class);
+        intent.putExtra(NAME_SHOPPING_LIST_KEY, mMainActivityPresenter.getShoppingListName(position));
+        startActivity(intent);
     }
 
     @Override
